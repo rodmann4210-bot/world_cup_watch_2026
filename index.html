@@ -52,6 +52,7 @@
   .hero .rec{font-family:'Barlow Condensed';letter-spacing:1px;color:var(--muted);font-size:13px;text-transform:uppercase}
   .hero .when{font-family:'Barlow Condensed';letter-spacing:1px;color:var(--ink);font-size:15px;margin:14px 0 4px;text-transform:uppercase}
   .hero .vs{font-family:'Oswald';font-weight:700;font-size:clamp(22px,4vw,30px);letter-spacing:1px}
+  .hero .vs img{width:30px;height:20px;object-fit:cover;vertical-align:middle;border-radius:2px;margin-right:7px;box-shadow:0 1px 3px rgba(0,0,0,.4)}
   .hero .meta{font-family:'Barlow Condensed';letter-spacing:1px;color:var(--muted);font-size:13px;margin-top:4px;text-transform:uppercase}
   .count{display:flex;gap:14px;margin-top:16px;flex-wrap:wrap}
   .unit{background:rgba(7,18,13,.5);border:1px solid var(--line-soft);border-radius:10px;padding:8px 14px;text-align:center;min-width:62px}
@@ -367,7 +368,11 @@ function statOf(entry,keys){
   return "";
 }
 function groupTable(g,highlightUSA){
-  const entries=(g.standings&&g.standings.entries)||g.entries||[];
+  const entries=(((g.standings&&g.standings.entries)||g.entries||[])).slice();
+  const _n=v=>{const x=parseFloat(String(v).replace("+",""));return isNaN(x)?-1e9:x;};
+  entries.sort((a,b)=>_n(statOf(b,["points","pts"]))-_n(statOf(a,["points","pts"]))
+    ||_n(statOf(b,["pointDifferential","goalDifference","GD"]))-_n(statOf(a,["pointDifferential","goalDifference","GD"]))
+    ||_n(statOf(b,["pointsFor","GF"]))-_n(statOf(a,["pointsFor","GF"])));
   let rows=entries.map((en,i)=>{const t=en.team||{};const me=highlightUSA&&isUSA(t)?" me":"";const adv=i<2?" adv":"";
     return `<tr class="${me.trim()}"><td class="tnm"><span class="${adv}">${i+1}</span> ${teamCell(t)}</td>`
       +`<td>${statOf(en,["gamesPlayed","GP"])}</td>`
